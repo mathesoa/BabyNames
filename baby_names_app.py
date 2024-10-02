@@ -42,7 +42,7 @@ with st.container(border=True):
     
     with col1:
         st.header("Name Statistics")
-        name = st.text_input("Look up a name:", "Mary")
+        name = st.text_input("Look up a name:", "Mary").capitalize()
         st.write("The current name is:", name)
 
         if name in combined_female_1["Name"].values:
@@ -55,6 +55,7 @@ with st.container(border=True):
             selected_female_df = combined_female_2 
         else:
             female_count = 0
+            selected_female_df = combined_female_1 
 
         if name in combined_male["Name"].values: 
             male_names = combined_male[combined_male["Name"]==name]
@@ -62,37 +63,42 @@ with st.container(border=True):
         else:
             male_count = 0
 
-        if female_count > male_count:
+        if female_count >= male_count:
             name_stats_df = selected_female_df
         else:
             name_stats_df = combined_male
+
+        if (female_count != 0) | (male_count != 0):
+            st.pyplot(plot_name_trend(name, name_stats_df))
         
-        st.pyplot(plot_name_trend(name, name_stats_df))
-    
-        name_df = name_stats_df[name_stats_df["Name"]==name]
-        earliest_year = name_df["Year"].min()
-        
-        highest_rank = name_df["Rank"].min()
-        
-        highest_count = name_df["Count"].max()
-        count_year_index = name_df["Count"].idxmax()
-        highest_count_year = name_df["Year"].loc[count_year_index]
-        
-        st.write("This name was first recorded in:" , earliest_year)
-        st.write("The highest rank for this name was:", highest_rank)
-        st.write("The highest count for this name was:", highest_count, "in the year", highest_count_year)
-    
-        boy_or_girl = name_df["Gender"].mode()[0]
-        if boy_or_girl == "M":
-            st.write("This name is most commonly a baby boy name")
-        else:
-            st.write("This name is most commonly a baby girl name")
+            name_df = name_stats_df[name_stats_df["Name"]==name]
+            earliest_year = name_df["Year"].min()
             
+            highest_rank = name_df["Rank"].min()
+            
+            highest_count = name_df["Count"].max()
+            count_year_index = name_df["Count"].idxmax()
+            highest_count_year = name_df["Year"].loc[count_year_index]
+            
+            st.write("This name was first recorded in:" , earliest_year)
+            st.write("The highest rank for this name was:", highest_rank)
+            st.write("The highest count for this name was:", highest_count, "in the year", highest_count_year)
+        
+            boy_or_girl = name_df["Gender"].mode()[0]
+            if boy_or_girl == "M":
+                st.write("This name is most commonly a baby boy name")
+            else:
+                st.write("This name is most commonly a baby girl name")
+        else:
+            st.write(f"The name {name} has not yet been recorded in the USA since the year 1880!")
     
     
     with col2:
         st.header("Find a Baby Name")
-        letter = st.text_input("Choose the first letter", "A")
+        letter = st.text_input("Choose the first letter", "A").capitalize()
+        if len(letter) > 1:
+            letter = letter[0]
+
         option = st.selectbox("Pick boy or girl:", ("Girl", "Boy"))
         generation = st.selectbox(
             "Selection a generation:", 
@@ -162,7 +168,7 @@ Simply enter a name, and the system will return the most similar names, ranked b
 """)
 with st.container(border=True):
     
-    input_name = st.text_input("Enter a name", "Anne")
+    input_name = st.text_input("Enter a name", "Anne").capitalize()
     
     # Input first letter from user (or you can make it dynamic)
     first_letter = input_name[0]
@@ -260,6 +266,8 @@ with st.container(border=True):
 
     # Input from user
     seed_text = st.text_input('Enter 1-4 seed letters:', 'J')
+    if seed_text > 4:
+        seed_text = seed_text[0:3]
     next_chars = st.slider('Select number of characters to generate:', 1, 10, 5)
 
 
