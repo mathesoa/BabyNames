@@ -266,7 +266,7 @@ with st.container(border=True):
 
     # Input from user
     seed_text = st.text_input('Enter 1-4 seed letters:', 'J')
-    if seed_text > 4:
+    if len(seed_text) > 4:
         seed_text = seed_text[0:3]
     next_chars = st.slider('Select number of characters to generate:', 1, 10, 5)
 
